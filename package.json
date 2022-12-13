@@ -1,0 +1,19 @@
+{
+  "name": "three-starter-template-with-shader",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.140.0",
+    "tweakpane": "^3.0.8"
+  },
+  "devDependencies": {
+    "vite": "^4.0.0",
+    "vite-plugin-glsl": "^0.3.0"
+  }
+}
