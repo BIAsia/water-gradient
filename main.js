@@ -39,8 +39,8 @@ export default class Sketch{
         );
 
         // this.isometricFill();
-        this.camera.position.y = -0.2;
-        this.camera.position.z = 0.5;
+        this.camera.position.y = -0.0002;
+        this.camera.position.z = 0.1;
 
         this.scene = new THREE.Scene();
         this.control = new OrbitControls(this.camera, this.renderer.domElement)
@@ -101,7 +101,7 @@ export default class Sketch{
     }
 
     addMesh(){
-        this.geometry = new THREE.PlaneGeometry(2,2, 300, 300);
+        this.geometry = new THREE.PlaneGeometry(2,2, 1000, 1000);
 
         this.material = new THREE.ShaderMaterial({
             vertexShader: vertex,
