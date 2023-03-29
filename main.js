@@ -6,16 +6,6 @@ import fragment from './shaders/fragment.glsl'
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 // let OrbitControls = require("three/examples/jsm/controls/OrbitControls").OrbitControls
 
-let paletteLight = [ "#e9ecef", "#dee2e6", "#f8f9fa","#ced4da", "#adb5bd"]
-let paletteDark = ['#343a40', '#495057', '#212529','#6c757d', '#1a1a1a',]
-
-paletteLight = paletteLight.map((color) => new THREE.Color(color))
-paletteDark = paletteDark.map((color) => new THREE.Color(color))
-
-let palette = paletteLight
-
-// let palette = [0xf8f9fa, 0xe9ecef, 0xdee2e6, 0xced4da, 0xadb5bd]
-
 export default class Sketch{
     constructor(){
         this.container = document.getElementById('container');
@@ -39,8 +29,7 @@ export default class Sketch{
         );
 
         // this.isometricFill();
-        this.camera.position.y = -0.0002;
-        this.camera.position.z = 0.1;
+        this.camera.position.z = 2;
 
         this.scene = new THREE.Scene();
         this.control = new OrbitControls(this.camera, this.renderer.domElement)
@@ -73,20 +62,12 @@ export default class Sketch{
         this.pane = new Pane();
         this.PARAMS = {
             progress: 0,
-            dark: false,
         };
-        // this.pane.addInput(
-        //     this.PARAMS, 'progress',
-        //     {min: 0, max: 1}
-        // ).on('change', (ev)=>{
-        //     this.material.uniforms.uProgress.value = ev.value;
-        // })
         this.pane.addInput(
-            this.PARAMS, 'dark',
+            this.PARAMS, 'progress',
+            {min: 0, max: 1}
         ).on('change', (ev)=>{
-            console.log('change to Dark')
-            if (this.PARAMS.dark) this.material.uniforms.uColor.value = paletteDark;
-            else this.material.uniforms.uColor.value = paletteLight;
+            this.material.uniforms.uProgress.value = ev.value;
         })
     }
 
@@ -101,7 +82,7 @@ export default class Sketch{
     }
 
     addMesh(){
-        this.geometry = new THREE.PlaneGeometry(2,2, 1000, 1000);
+        this.geometry = new THREE.PlaneBufferGeometry(1,1);
 
         this.material = new THREE.ShaderMaterial({
             vertexShader: vertex,
@@ -113,7 +94,6 @@ export default class Sketch{
                 uProgress: {value: 0},
                 uImg: {value: this.texture},
                 uTime: {value: 0},
-                uColor: {value: palette}
                 // uSize: {value: 6.0},
                 // uScale: {value: 0}
             },
@@ -144,7 +124,7 @@ export default class Sketch{
         
         // this.scene.rotation.x = this.time / 2000;
 	    // this.scene.rotation.y = this.time / 1000;
-        this.material.uniforms.uTime.value = this.time*0.001;
+        this.material.uniforms.uTime.value = this.time;
         this.control.update();
         this.renderer.render( this.scene, this.camera );
         
