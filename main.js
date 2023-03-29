@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {CCapture} from 'ccapture.js-npmfixed';
 import {Pane} from 'tweakpane';
 import vertex from './shaders/vertex.glsl'
 import fragment from './shaders/fragment.glsl'
@@ -6,8 +7,9 @@ import fragment from './shaders/fragment.glsl'
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 // let OrbitControls = require("three/examples/jsm/controls/OrbitControls").OrbitControls
 
-let paletteLight = [ "#e9ecef", "#dee2e6", "#f8f9fa","#ced4da", "#adb5bd"]
-let paletteDark = ['#343a40', '#495057', '#212529','#6c757d', '#1a1a1a',]
+let paletteLight = [ "#e9ecef", "#dee2e6", "#f8f9fa","#dee2e6", "#e5e5ed"]
+// let paletteDark = ['#363636', '#2C2C2C', '#242424','#181818', '#0A0A0A',]
+let paletteDark = ['#0A0A0A', '#181818', '#242424','#2C2C2C', '#363636',]
 
 paletteLight = paletteLight.map((color) => new THREE.Color(color))
 paletteDark = paletteDark.map((color) => new THREE.Color(color))
@@ -18,6 +20,7 @@ let palette = paletteLight
 
 export default class Sketch{
     constructor(){
+        this.onCapture = false;
         this.container = document.getElementById('container');
         this.width = this.container.offsetWidth;
         this.height = this.container.offsetHeight;
@@ -39,8 +42,8 @@ export default class Sketch{
         );
 
         // this.isometricFill();
-        this.camera.position.y = -0.0002;
-        this.camera.position.z = 0.1;
+        this.camera.position.y = -0.05;
+        this.camera.position.z = 0.08;
 
         this.scene = new THREE.Scene();
         this.control = new OrbitControls(this.camera, this.renderer.domElement)
@@ -88,6 +91,59 @@ export default class Sketch{
             if (this.PARAMS.dark) this.material.uniforms.uColor.value = paletteDark;
             else this.material.uniforms.uColor.value = paletteLight;
         })
+
+        this.PARAMS_EXPORT = {
+            frameRate: 25,
+            format: 'png',
+        }
+        const recordFolder = this.pane.addFolder({
+            title: 'Record',
+            expanded: true,
+        });
+        recordFolder.addInput(this.PARAMS_EXPORT, 'frameRate',{min: 10, max: 60, step:1});
+        recordFolder.addInput(this.PARAMS_EXPORT, 'format',{
+            options: {
+                Imgs: 'png',
+                Video: 'webm',
+                // Gif: 'gif'
+            }
+        });
+        recordFolder.addSeparator();
+        const btnStart = recordFolder.addButton({title: 'Start Recording'})
+        
+        const btnStop = recordFolder.addButton({title: 'Stop Recording', disabled: true})
+        
+        btnStop.on('click', (ev)=>{
+            if (this.capturer){
+                this.capturer.stop();
+                this.onCapture = false;
+                this.capturer.save();
+            }
+            btnStart.disabled = false;
+        })
+        btnStart.on('click', (ev)=>{
+            this.addCapture();
+            btnStop.disabled = false;
+            btnStart.disabled = true;
+        })
+
+    }
+
+    addCapture(){
+        this.capturer = new CCapture({
+            framerate: this.PARAMS_EXPORT.frameRate,
+            verbose: false,
+            format: this.PARAMS_EXPORT.format,
+            // display: true,
+            autoSaveTime: 0,
+            timeLimit: 4,
+            frameLimit: 0,
+            quality: 99,
+            workersPath: './lib/',
+        })
+        this.capturer.start();
+        this.onCapture = true;
+        
     }
 
     mouseEvent(){
@@ -149,6 +205,7 @@ export default class Sketch{
         this.renderer.render( this.scene, this.camera );
         
         window.requestAnimationFrame(this.render.bind(this))
+        if (this.onCapture) this.capturer.capture(this.renderer.domElement);
     }
 }
 

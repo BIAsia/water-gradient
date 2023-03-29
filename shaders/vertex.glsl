@@ -85,7 +85,7 @@ float snoise(vec3 v){
 void main() {
 
   // noise
-  vec2 noiseCoord = uv*vec2(8.6, 10.);
+  vec2 noiseCoord = uv*vec2(18.6, 10.);
   float noise = snoise(vec3(noiseCoord.x + uTime*0.6, noiseCoord.y + uTime*0.4, uTime));
   noise = max(0., noise);
 
@@ -93,7 +93,7 @@ void main() {
   float incline = uv.x*1.5;
   float offset = incline*mix(-.25, .25, uv.y);
 
-  vPosition = vec3(position.x, position.y, position.z + noise*0.1 + offset);
+  vPosition = vec3(position.x, position.y, position.z + noise*0.03 + offset);
   vUV = uv;
   vNormal = normal;
   vNormal = normalize(normal*normalMatrix);
