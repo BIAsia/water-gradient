@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "ccapture.js-npmfixed": "^1.1.0",
     "three": "^0.140.0",
     "tweakpane": "^3.0.8"
   },
