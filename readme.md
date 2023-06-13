@@ -1,4 +1,4 @@
-# Three starter template with shader
+# Water gradient
 
-- using Vite as build tool
-- tweakpane for GUI
+- adapt from shadergradient[https://github.com/ruucm/shadergradient]
+- basic controls on colors
